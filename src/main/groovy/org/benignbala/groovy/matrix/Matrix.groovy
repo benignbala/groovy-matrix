@@ -1,7 +1,5 @@
 package org.benignbala.groovy.matrix;
 
-import groovy.transform.CompileStatic
-import groovy.transform.TypeChecked
 import java.util.ArrayList
 import groovyx.gpars.GParsExecutorsPool
 import groovyx.gpars.GParsPool
@@ -44,6 +42,10 @@ class Matrix {
         elements.getAt(row).set(col, element)
     }
 
+    Object getAt(int row, int col) {
+        return elements.getAt(row).getAt(col)
+    }
+
     ArrayList getColumns() {
         ArrayList columns = new ArrayList()
         ParallelEnhancer.enhanceInstance(this.elements)
@@ -75,16 +77,16 @@ class Matrix {
     }
 
     Matrix multiply(Matrix other) {
-        if (this.rowSize() != other.columnSize()) 
-            throw new MatrixMultiplierException(this.rowSize(), this.columnSize());
+        if (this.columnSize() != other.rowSize()) 
+            throw new MatrixMultiplierException(this.columnSize(), this.rowSize());
         ArrayList columns = other.getColumns()
         ArrayList rows = this.getElements()
         Matrix result = new Matrix(this.rowSize(), other.columnSize())
-        columns.parallelStream().each { col ->
+        rows.parallelStream().each { row ->
             ArrayList tmp = new ArrayList()
-            rows.parallelStream().each {row ->
+            columns.parallelStream().each {col ->
                 int val = 0
-                (0..row.size()-1).parallelStream().each { i ->
+                (0..col.size()-1).parallelStream().each { i ->
                     val += row.get(i) * col.get(i)
                 }
                 tmp.add(val)
@@ -92,15 +94,35 @@ class Matrix {
             result.addRow(tmp)
         }
         return result
-    }            
+    }
+
+    Matrix plus(Matrix other) {
+        if (this.rowSize() != other.rowSize())  {
+            throw new MatrixAdderException("Matrix addition needs two matrices of same dimentsions");
+        }
+        Matrix result = new Matrix(this.rowSize(), this.columnSize())
+        ArrayList rowsSelf = this.getElements()
+        ArrayList rowsOther = other.getElements()
+        (0..this.rowSize()-1).parallelStream().each { i ->
+            ArrayList tmp = new ArrayList()
+            (0..this.columnSize()-1).parallelStream().each { c ->
+                tmp.add(this.getAt(i, c) + other.getAt(i, c))
+            }
+            result.addRow(tmp)
+        }
+        return result
+    }
 }
 
-@CompileStatic
-@TypeChecked
 class MatrixMultiplierException extends Exception {
-    MatrixMultiplierException(int row, int col) {
-        super ("Source Matrix should have " + row + "rows and second matrix should have " + col + " columns")
+    MatrixMultiplierException(int col, int row) {
+        super ("Source Matrix should have " + col + "columns and second matrix should have " + row + " rows")
     }
 }
 
     
+class MatrixAdderException extends Exception {
+    MatrixAdderException(String message) {
+        super(message)
+    }
+}

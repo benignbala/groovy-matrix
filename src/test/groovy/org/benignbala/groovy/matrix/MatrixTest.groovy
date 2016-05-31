@@ -94,5 +94,27 @@ class MatrixTest extends Specification {
         assert [4, 4] == r.getColumns().get(0)
 
     }
+
+    def multiplyUnevenTest() {
+        when:
+        Matrix m = new Matrix(3, 2, [[1, 2], [3, 4], [5, 6]])
+        Matrix n = new Matrix(2, 3, [[1, 2, 3], [4, 5, 6]])
+
+        Matrix r = m * n
+        then:
+        assert r instanceof Matrix
+        assert [9, 12, 15] == r.getElements().get(0)
+    }
+
+    def addSimpleTest() {
+        when:
+        Matrix m = new Matrix(2, 2, [[1, 1], [1, 1]])
+        Matrix n = new Matrix(2, 2, [[1, 1], [1, 1]])
+
+        Matrix r = m + n
+        
+        then:
+        assert [2, 2] == r.getColumns().get(0)
+    }
 }
 
