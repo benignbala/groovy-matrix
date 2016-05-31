@@ -3,7 +3,7 @@ A simple Matrix utility written in Groovy, enhanced with GPars
 
 == Description
 
-groovy-matrix is a simple groovy utility to do Matrix operations (currently just multiplication). This has 
+groovy-matrix is a simple groovy utility to do Matrix operations (currently just multiplication and addition). This has 
 been implemented in groovy and GPars.
 
 == Usage
@@ -19,4 +19,10 @@ n.addRow([1, 1])
 n.addRow([1, 1])
 
 Matrix r = m * n
+Matrix s = m + n
 ....
+
+== TODO
+
+I am planning to add more operations like determinant, eigen values etc. to this module.
+
