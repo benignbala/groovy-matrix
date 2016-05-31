@@ -1,0 +1,8 @@
+# Emacs swap files
+**/*~
+
+# Gradle cache
+.gradle/
+
+# Build dir
+build/
