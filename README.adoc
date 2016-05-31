@@ -1,0 +1,22 @@
+= groovy-matrix
+A simple Matrix utility written in Groovy, enhanced with GPars
+
+== Description
+
+groovy-matrix is a simple groovy utility to do Matrix operations (currently just multiplication). This has 
+been implemented in groovy and GPars.
+
+== Usage
+
+[source, groovy]
+....
+Matrix m  = new Matrix(2, 2)
+m.addRow([1, 1])
+m.addRow([1, 1])
+
+Matrix n  = new Matrix(2, 2)
+n.addRow([1, 1])
+n.addRow([1, 1])
+
+Matrix r = m * n
+....
