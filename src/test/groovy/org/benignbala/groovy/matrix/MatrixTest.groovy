@@ -116,5 +116,37 @@ class MatrixTest extends Specification {
         then:
         assert [2, 2] == r.getColumns().get(0)
     }
+
+    def detSimpleTest() {
+        when:
+        Matrix m = new Matrix(2, 2, [[1, 1], [1, 1]])
+
+        then:
+        assert 0 == m.determinant()
+    }
+
+    def detSimple3X3Test() {
+        when:
+        Matrix m = new Matrix(3, 3, [[1, 1, 1], [1, 1, 1], [1, 1, 1]])
+
+        then:
+        assert 0 == m.determinant()
+    }
+
+    def det3X3Test() {
+        when:
+        Matrix m = new Matrix(3, 3, [[1, 2, 3], [4, 5, 6], [7, 8, 8]])
+
+        then:
+        assert 3 == m.determinant()
+    }
+
+    def det4X4Test() {
+        when:
+        Matrix m = new Matrix(4, 4,  [[12,22, 13, 7],[41,5,16, 2],[17,18, -8, 5], [10, 9, 12, 29]])
+
+        then:
+        assert 459684 == m.determinant()
+    }
 }
 

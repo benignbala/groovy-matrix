@@ -4,6 +4,7 @@ import java.util.ArrayList
 import groovyx.gpars.GParsExecutorsPool
 import groovyx.gpars.GParsPool
 import groovyx.gpars.ParallelEnhancer
+
 /**
  * @author Balachandran Sivakumar
  *
@@ -25,7 +26,20 @@ class Matrix {
         numColumns = columns
         this.elements = elements
     }
-    
+
+    String toString() {
+        String s = ""
+        s += "[["
+        this.elements.each { row ->
+            row.each { el ->
+                s += "${el}"
+            }
+            s += "]"
+        }
+        s += "]"
+        return s
+    }
+
     int rowSize() {
         return this.numRows
     }
@@ -76,6 +90,43 @@ class Matrix {
         return column
     }
 
+    /**
+     * Matrix operations.
+     *
+     */
+
+    /**
+     * Determinant
+     *
+     * Laplace formula, need help parallelising this.
+     * TODO: rewrite and optimise.
+     */
+    int determinant(Matrix m = new Matrix(0, 0)) {
+        int det = 0
+        if (!m.rowSize()) {
+            m = this
+        }
+        if (m.rowSize() == 2 && m.columnSize() == 2) {
+            return ((m.getAt(0, 0) * m.getAt(1, 1)) + (-1 * m.getAt(0, 1) * m.getAt(1, 0)))
+        } else {
+            int j = 0
+            for (int i = 0; i < m.columnSize(); ++i) {
+                det += Math.pow(-1, (i+j)) * m.getAt(i, j) * determinant(m.matrix(i, j))
+            }
+        }
+        return det
+    }
+
+    /**
+     * Inverse
+     *
+     */
+    
+    /**
+     * This needs to be done better, using parallel sum etc.
+     * Also, tmp.add(val) seen in this code is NOT safe.
+     *
+     */
     Matrix multiply(Matrix other) {
         if (this.columnSize() != other.rowSize()) 
             throw new MatrixMultiplierException(this.columnSize(), this.rowSize());
@@ -112,6 +163,23 @@ class Matrix {
         }
         return result
     }
+
+    Matrix matrix(int excludeRow, int excludeColumn) {
+        Matrix m = new Matrix(this.rowSize() - 1, this.columnSize() - 1)
+        (0..this.rowSize()-1).each { row ->
+            if (row != excludeRow) {
+                ArrayList r = new ArrayList()
+                (0..this.columnSize()-1).each {col ->
+                    if (col != excludeColumn) {
+                        r.add(this.getAt(row, col))
+                    }
+                }
+                m.addRow(r)
+            }
+        }
+        return m
+    }
+    
 }
 
 class MatrixMultiplierException extends Exception {
